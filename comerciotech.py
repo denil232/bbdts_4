@@ -105,3 +105,4 @@ for p in ver_pedidos_cliente(id_cliente):
 
 #             Para ejecutar la base de datos en local
 # cd ruta/a/bbdts_4 // python app.py //  pip install flask flask-cors pymongo // pip install pymongo 
+# MongoClient("mongodb://localhost:27017/")
