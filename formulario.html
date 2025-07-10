@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulario CRUD MongoDB</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+    input, button { margin: 5px; padding: 8px; }
+    .form-group { margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Formulario de Clientes</h2>
+
+  <!-- Crear o Actualizar -->
+  <div class="form-group">
+    <input type="number" id="id" placeholder="ID">
+    <input type="text" id="nombre" placeholder="Nombre">
+    <input type="text" id="apellidos" placeholder="Apellidos">
+    <input type="text" id="calle" placeholder="Calle">
+    <input type="number" id="numero" placeholder="Número">
+    <input type="text" id="ciudad" placeholder="Ciudad">
+    <button onclick="crearCliente()">Crear</button>
+    <button onclick="actualizarCliente()">Actualizar</button>
+  </div>
+
+  <!-- Eliminar -->
+  <div class="form-group">
+    <input type="number" id="idEliminar" placeholder="ID a eliminar">
+    <button onclick="eliminarCliente()">Eliminar</button>
+  </div>
+
+  <!-- Leer -->
+  <div class="form-group">
+    <button onclick="leerClientes()">Leer todos los clientes</button>
+  </div>
+
+  <pre id="salida"></pre>
+
+  <script>
+    const API_URL = 'http://localhost:5000';
+
+    function crearCliente() {
+      const datos = {
+        _id: parseInt(document.getElementById('id').value),
+        nombre: document.getElementById('nombre').value,
+        apellidos: document.getElementById('apellidos').value,
+        direccion: {
+          calle: document.getElementById('calle').value,
+          numero: parseInt(document.getElementById('numero').value),
+          ciudad: document.getElementById('ciudad').value
+        }
+      };
+      fetch(`${API_URL}/crear`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(datos)
+      }).then(res => res.text()).then(alert);
+    }
+
+    function actualizarCliente() {
+      const datos = {
+        _id: parseInt(document.getElementById('id').value),
+        nombre: document.getElementById('nombre').value
+      };
+      fetch(`${API_URL}/actualizar`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(datos)
+      }).then(res => res.text()).then(alert);
+    }
+
+    function eliminarCliente() {
+      const id = parseInt(document.getElementById('idEliminar').value);
+      fetch(`${API_URL}/eliminar/${id}`, {
+        method: 'DELETE'
+      }).then(res => res.text()).then(alert);
+    }
+
+    function leerClientes() {
+      fetch(`${API_URL}/leer`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('salida').textContent = JSON.stringify(data, null, 2);
+        });
+    }
+  </script>
+</body>
+</html>
