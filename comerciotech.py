@@ -1,108 +1,65 @@
 from pymongo import MongoClient
-from bson import ObjectId
+from datetime import datetime
+import re
 
-# Conexión a MongoDB
 cliente = MongoClient("mongodb://localhost:27017/")
 db = cliente["comerciotech"]
 
-# ========================
-# CRUD Clientes
-# ========================
+id_regex = re.compile(r'^[1-9][0-9]{0,5}$')
+texto_regex = re.compile(r'^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$')
 
-def crear_cliente(nombre, apellidos, calle, numero, ciudad, fecha):
+def validar_id(id_str):
+    return bool(id_regex.fullmatch(id_str.strip())) if isinstance(id_str, str) else False
+
+def validar_texto(texto):
+    return bool(texto_regex.fullmatch(texto.strip())) if isinstance(texto, str) else False
+
+def validar_fecha(fecha_str):
+    try:
+        fecha = datetime.strptime(fecha_str, "%Y-%m-%d")
+        return datetime(2000,1,1) <= fecha <= datetime.now()
+    except:
+        return False
+
+def crear_cliente(id_cliente, nombre, apellidos, calle, numero, ciudad, fecha):
+    if not validar_id(id_cliente):
+        raise ValueError("ID inválido: debe ser numérico, 1-6 dígitos y empezar con 1-9")
+    if not validar_texto(nombre):
+        raise ValueError("Nombre inválido: solo letras y espacios permitidos")
+    if not validar_texto(apellidos):
+        raise ValueError("Apellidos inválidos: solo letras y espacios permitidos")
+    if not validar_texto(ciudad):
+        raise ValueError("Ciudad inválida: solo letras y espacios permitidos")
+    if not validar_fecha(fecha):
+        raise ValueError("Fecha inválida: debe estar entre 2000-01-01 y hoy")
+
     cliente = {
-        "nombre": nombre,
-        "apellidos": apellidos,
+        "_id": id_cliente.strip(),
+        "nombre": nombre.strip(),
+        "apellidos": apellidos.strip(),
         "direccion": {
-            "calle": calle,
+            "calle": calle.strip() if calle else "",
             "numero": numero,
-            "ciudad": ciudad
+            "ciudad": ciudad.strip()
         },
-        "fechaRegistro": fecha
+        "fechaRegistro": datetime.strptime(fecha, "%Y-%m-%d")
     }
     return db.clientes.insert_one(cliente).inserted_id
 
-def buscar_clientes_por_ciudad(ciudad):
-    return list(db.clientes.find({"direccion.ciudad": ciudad}))
+def actualizar_cliente(id_cliente, nuevos_datos):
+    if not validar_id(id_cliente):
+        raise ValueError("ID inválido para actualización")
+    if 'nombre' in nuevos_datos and not validar_texto(nuevos_datos['nombre']):
+        raise ValueError("Nombre inválido para actualización")
+    if 'apellidos' in nuevos_datos and not validar_texto(nuevos_datos['apellidos']):
+        raise ValueError("Apellidos inválidos para actualización")
+    if 'direccion' in nuevos_datos and 'ciudad' in nuevos_datos['direccion']:
+        if not validar_texto(nuevos_datos['direccion']['ciudad']):
+            raise ValueError("Ciudad inválida para actualización")
 
-def buscar_clientes_por_fecha(fecha):
-    return list(db.clientes.find({"fechaRegistro": fecha}))
+    db.clientes.update_one({"_id": id_cliente.strip()}, {"$set": nuevos_datos})
 
-def actualizar_cliente(cliente_id, nuevos_datos):
-    db.clientes.update_one({"_id": ObjectId(cliente_id)}, {"$set": nuevos_datos})
-
-def eliminar_cliente(cliente_id):
-    db.clientes.delete_one({"_id": ObjectId(cliente_id)})
-
-# ========================
-# CRUD Productos
-# ========================
-
-def crear_producto(codigo, nombre, precio, stock, estado):
-    producto = {
-        "codigo": codigo,
-        "nombre": nombre,
-        "precio": precio,
-        "stock": stock,
-        "estado": estado
-    }
-    return db.productos.insert_one(producto).inserted_id
-
-def buscar_producto_por_codigo(codigo):
-    return db.productos.find_one({"codigo": codigo})
-
-# ========================
-# CRUD Pedidos
-# ========================
-
-def crear_pedido(codigo, id_cliente, fecha, lista_productos, metodo_pago):
-    total_compra = sum(p["total_comprado"] for p in lista_productos)
-    pedido = {
-        "codigo": codigo,
-        "cliente": ObjectId(id_cliente),
-        "fecha": fecha,
-        "productos": lista_productos,
-        "total_compra": total_compra,
-        "metodo_pago": metodo_pago
-    }
-    return db.pedidos.insert_one(pedido).inserted_id
-
-def ver_pedidos_cliente(id_cliente):
-    return list(db.pedidos.find({"cliente": ObjectId(id_cliente)}))
-
-# ========================
-# PRUEBAS
-# ========================
-
-# Crear cliente
-id_cliente = crear_cliente("Mario", "Rojas", "Los Alerces", 45, "Concepción", "2025-07-07")
-
-# Crear producto
-crear_producto("PRD001", "Tablet X", 150000, 30, "activo")
-
-# Buscar producto
-producto = buscar_producto_por_codigo("PRD001")
-
-# Crear pedido
-productos_pedido = [{
-    "codigo": producto["codigo"],
-    "nombre": producto["nombre"],
-    "cantidad": 1,
-    "precio_unitario": producto["precio"],
-    "total_comprado": producto["precio"]
-}]
-crear_pedido("PED001", id_cliente, "2025-07-07", productos_pedido, "Tarjeta")
-
-# Consultar clientes por ciudad
-print("Clientes en Concepción:")
-for c in buscar_clientes_por_ciudad("Concepción"):
-    print(c)
-
-# Consultar pedidos del cliente
-print("Pedidos del cliente:")
-for p in ver_pedidos_cliente(id_cliente):
-    print(p)
-
-#             Para ejecutar la base de datos en local
-# cd ruta/a/bbdts_4 // python app.py //  pip install flask flask-cors pymongo // pip install pymongo 
-# MongoClient("mongodb://localhost:27017/")
+def eliminar_cliente(id_cliente):
+    if not validar_id(id_cliente):
+        raise ValueError("ID inválido para eliminación")
+    db.clientes.delete_one({"_id": id_cliente.strip()})

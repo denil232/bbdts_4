@@ -1,89 +1,463 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Formulario CRUD MongoDB</title>
+  <meta charset="UTF-8" />
+  <title>Formulario ComercioTech</title>
   <style>
-    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
-    input, button { margin: 5px; padding: 8px; }
-    .form-group { margin-bottom: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+      color: #333;
+    }
+    nav {
+      background-color: #333;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      display: flex;
+      gap: 15px;
+    }
+    nav a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #fff;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+      cursor: pointer;
+      user-select: none;
+    }
+    nav a:hover,
+    nav a.active {
+      background-color: teal;
+      color: white;
+    }
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    input,
+    button,
+    select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      background-color: white;
+    }
+    button {
+      background-color: teal;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #007a7a;
+    }
+    h2 {
+      margin-top: 0;
+      color: #222;
+    }
+    .seccion {
+      display: none;
+    }
+    .visible {
+      display: block !important;
+    }
+    pre {
+      background: #eaeaea;
+      padding: 15px;
+      border-radius: 5px;
+      max-height: 300px;
+      overflow: auto;
+      white-space: pre-wrap;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 10px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <h2>Formulario de Clientes</h2>
+  <nav>
+    <a onclick="mostrarSeccion('clientes')" class="active">Clientes</a>
+    <a onclick="mostrarSeccion('productos')">Productos</a>
+    <a onclick="mostrarSeccion('pedidos')">Pedidos</a>
+  </nav>
 
-  <!-- Crear o Actualizar -->
-  <div class="form-group">
-    <input type="number" id="id" placeholder="ID">
-    <input type="text" id="nombre" placeholder="Nombre">
-    <input type="text" id="apellidos" placeholder="Apellidos">
-    <input type="text" id="calle" placeholder="Calle">
-    <input type="number" id="numero" placeholder="Número">
-    <input type="text" id="ciudad" placeholder="Ciudad">
-    <button onclick="crearCliente()">Crear</button>
-    <button onclick="actualizarCliente()">Actualizar</button>
+  <!-- Clientes -->
+  <div id="clientes" class="seccion visible">
+    <h2>Formulario de Clientes</h2>
+    <div class="form-group">
+      <input type="text" id="cliente_id" placeholder="ID (alfa-numérico)" />
+      <input type="text" id="cliente_nombre" placeholder="Nombre (máx. 25 letras)" maxlength="25" oninput="soloLetras(this)" />
+      <input type="text" id="cliente_apellidos" placeholder="Apellidos" oninput="soloLetras(this)" />
+      <input type="text" id="cliente_calle" placeholder="Calle" />
+      <input type="number" id="cliente_numero" placeholder="Número" />
+      <input type="text" id="cliente_ciudad" placeholder="Ciudad (máx. 25 letras)" maxlength="25" oninput="soloLetras(this)" />
+      <input type="date" id="cliente_fechaRegistro" min="2000-01-01" max="" />
+      <button onclick="crearCliente()">Crear usuario</button>
+    </div>
+
+    <div class="form-group">
+      <input type="text" id="cliente_id_eliminar" placeholder="ID a eliminar" />
+      <button onclick="eliminarCliente()">Eliminar usuario</button>
+    </div>
+
+    <button onclick="leerClientes()">Consultar clientes</button>
+    <pre id="salida_clientes"></pre>
   </div>
 
-  <!-- Eliminar -->
-  <div class="form-group">
-    <input type="number" id="idEliminar" placeholder="ID a eliminar">
-    <button onclick="eliminarCliente()">Eliminar</button>
+  <!-- Productos -->
+  <div id="productos" class="seccion">
+    <h2>Formulario de Productos</h2>
+    <div class="form-group">
+      <input type="text" id="producto_id" placeholder="ID único del producto" />
+      <input type="text" id="producto_codigo" placeholder="Código del producto (máx. 10)" maxlength="10" />
+      <input type="text" id="producto_nombre" placeholder="Nombre del producto" oninput="soloLetrasEspacios(this)" />
+      <input type="number" id="producto_precio" placeholder="Precio" min="0" step="0.01" />
+      <input type="number" id="producto_stock" placeholder="Stock" min="0" step="1" />
+      <select id="producto_estado">
+        <option value="">Seleccione estado</option>
+        <option value="activo">Activo</option>
+        <option value="inactivo">Inactivo</option>
+      </select>
+      <button onclick="crearProducto()">Crear producto</button>
+    </div>
+
+    <div class="form-group">
+      <input type="text" id="producto_id_eliminar" placeholder="ID a eliminar" />
+      <button onclick="eliminarProducto()">Eliminar producto</button>
+    </div>
+
+    <button onclick="leerProductos()">Consultar productos</button>
+    <pre id="salida_productos"></pre>
   </div>
 
-  <!-- Leer -->
-  <div class="form-group">
-    <button onclick="leerClientes()">Leer todos los clientes</button>
-  </div>
+  <!-- Pedidos -->
+  <div id="pedidos" class="seccion">
+    <h2>Formulario de Pedidos</h2>
+    <div class="form-group">
+      <input type="text" id="pedido_id" placeholder="ID único del pedido" />
+      <input type="text" id="pedido_cliente_id" placeholder="ID Cliente" />
+      <input type="date" id="pedido_fecha" min="2000-01-01" max="" />
+    </div>
 
-  <pre id="salida"></pre>
+    <div id="productos_agregados_container">
+      <h3>Productos agregados</h3>
+      <table id="tabla_productos_agregados">
+        <thead>
+          <tr><th>Nombre producto</th><th>Cantidad</th><th>Precio unitario</th><th>Subtotal</th><th>Acciones</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div><strong>Total: $<span id="total_pedido">0.00</span></strong></div>
+    </div>
+
+    <div class="form-group" style="margin-top:20px;">
+      <input type="text" id="producto_nombre_input" placeholder="Nombre producto" />
+      <input type="number" id="producto_cantidad_input" placeholder="Cantidad" min="1" value="1" />
+      <button onclick="agregarProductoPedido()">Agregar producto</button>
+      <div id="error_producto" class="error"></div>
+    </div>
+
+    <div class="form-group" style="margin-top:10px;">
+      <label for="pedido_metodo_pago">Método de Pago:</label>
+      <select id="pedido_metodo_pago">
+        <option value="">Seleccione método</option>
+        <option value="efectivo">Efectivo</option>
+        <option value="tarjeta">Tarjeta</option>
+        <option value="transferencia">Transferencia</option>
+      </select>
+    </div>
+
+    <button onclick="crearPedido()">Crear pedido</button>
+
+    <div class="form-group" style="margin-top:20px;">
+      <input type="text" id="pedido_id_eliminar" placeholder="ID pedido a eliminar" />
+      <button onclick="eliminarPedido()">Eliminar pedido</button>
+    </div>
+
+    <button onclick="leerPedidos()">Consultar pedidos</button>
+    <pre id="salida_pedidos"></pre>
+  </div>
 
   <script>
-    const API_URL = 'http://localhost:5000';
+    // Variables globales para productos cargados desde backend
+    let productosDisponibles = [];
 
-    function crearCliente() {
-      const datos = {
-        _id: parseInt(document.getElementById('id').value),
-        nombre: document.getElementById('nombre').value,
-        apellidos: document.getElementById('apellidos').value,
-        direccion: {
-          calle: document.getElementById('calle').value,
-          numero: parseInt(document.getElementById('numero').value),
-          ciudad: document.getElementById('ciudad').value
-        }
-      };
-      fetch(`${API_URL}/crear`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(datos)
-      }).then(res => res.text()).then(alert);
+    function mostrarSeccion(id) {
+      document.querySelectorAll('.seccion').forEach(s => s.classList.remove('visible'));
+      document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+      document.getElementById(id).classList.add('visible');
+      document.querySelector(`nav a[onclick="mostrarSeccion('${id}')"]`).classList.add('active');
+      if(id === 'clientes') {
+        document.getElementById('cliente_fechaRegistro').max = new Date().toISOString().split('T')[0];
+        document.getElementById('cliente_fechaRegistro').value = document.getElementById('cliente_fechaRegistro').max;
+      }
+      if(id === 'pedidos') {
+        document.getElementById('pedido_fecha').max = new Date().toISOString().split('T')[0];
+        document.getElementById('pedido_fecha').value = document.getElementById('pedido_fecha').max;
+        cargarProductos();
+        resetPedido();
+      }
     }
 
-    function actualizarCliente() {
-      const datos = {
-        _id: parseInt(document.getElementById('id').value),
-        nombre: document.getElementById('nombre').value
-      };
-      fetch(`${API_URL}/actualizar`, {
-        method: 'PUT',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(datos)
-      }).then(res => res.text()).then(alert);
+    // Solo letras (sin números ni caracteres especiales)
+    function soloLetras(input) {
+      input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
     }
 
-    function eliminarCliente() {
-      const id = parseInt(document.getElementById('idEliminar').value);
-      fetch(`${API_URL}/eliminar/${id}`, {
-        method: 'DELETE'
-      }).then(res => res.text()).then(alert);
+    // Letras y espacios (para nombre de productos)
+    function soloLetrasEspacios(input) {
+      input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
     }
 
-    function leerClientes() {
-      fetch(`${API_URL}/leer`)
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('salida').textContent = JSON.stringify(data, null, 2);
+    // Cargar productos desde backend para validar en pedidos
+    async function cargarProductos() {
+      try {
+        const res = await fetch('http://localhost:5000/leer_productos');
+        if(!res.ok) throw new Error('Error cargando productos');
+        productosDisponibles = await res.json();
+      } catch(e) {
+        alert('Error al cargar productos: ' + e.message);
+      }
+    }
+
+    // Lista de productos agregados al pedido
+    let productosPedido = [];
+
+    // Agregar producto al pedido
+    function agregarProductoPedido() {
+      const nombre = document.getElementById('producto_nombre_input').value.trim();
+      const cantidad = parseInt(document.getElementById('producto_cantidad_input').value);
+      const errorDiv = document.getElementById('error_producto');
+      errorDiv.textContent = '';
+
+      if(!nombre) {
+        errorDiv.textContent = 'Ingrese el nombre del producto';
+        return;
+      }
+      if(!cantidad || cantidad < 1) {
+        errorDiv.textContent = 'Ingrese una cantidad válida (>=1)';
+        return;
+      }
+
+      // Buscar producto por nombre (case insensitive)
+      const producto = productosDisponibles.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
+      if(!producto) {
+        errorDiv.textContent = 'Producto no encontrado';
+        return;
+      }
+
+      // Verificar si producto ya está agregado, si sí, sumar cantidad
+      const existente = productosPedido.find(p => p._id === producto._id);
+      if(existente) {
+        existente.cantidad += cantidad;
+      } else {
+        productosPedido.push({
+          _id: producto._id,
+          nombre: producto.nombre,
+          precio: producto.precio,
+          cantidad: cantidad
         });
+      }
+
+      // Limpiar inputs
+      document.getElementById('producto_nombre_input').value = '';
+      document.getElementById('producto_cantidad_input').value = 1;
+      errorDiv.textContent = '';
+
+      actualizarTablaProductos();
+      actualizarTotal();
     }
+
+    // Actualizar tabla productos agregados
+    function actualizarTablaProductos() {
+      const tbody = document.querySelector('#tabla_productos_agregados tbody');
+      tbody.innerHTML = '';
+      productosPedido.forEach((p, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${p.nombre}</td>
+          <td>${p.cantidad}</td>
+          <td>$${p.precio.toFixed(2)}</td>
+          <td>$${(p.precio * p.cantidad).toFixed(2)}</td>
+          <td><button onclick="quitarProducto(${i})">Quitar</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Quitar producto de la lista
+    function quitarProducto(index) {
+      productosPedido.splice(index, 1);
+      actualizarTablaProductos();
+      actualizarTotal();
+    }
+
+    // Actualizar total del pedido
+    function actualizarTotal() {
+      const total = productosPedido.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+      document.getElementById('total_pedido').textContent = total.toFixed(2);
+    }
+
+    // Resetear pedido (limpiar lista productos y tabla)
+    function resetPedido() {
+      productosPedido = [];
+      actualizarTablaProductos();
+      actualizarTotal();
+      document.getElementById('pedido_id').value = '';
+      document.getElementById('pedido_cliente_id').value = '';
+      document.getElementById('pedido_metodo_pago').value = '';
+      document.getElementById('error_producto').textContent = '';
+    }
+
+    // Crear pedido validando todo
+    async function crearPedido() {
+      const pedidoId = document.getElementById('pedido_id').value.trim();
+      const clienteId = document.getElementById('pedido_cliente_id').value.trim();
+      const fechaPedido = document.getElementById('pedido_fecha').value;
+      const metodoPago = document.getElementById('pedido_metodo_pago').value;
+
+      if (!pedidoId) { alert('El ID del pedido es obligatorio'); return; }
+      if (!clienteId) { alert('El ID del cliente es obligatorio'); return; }
+      if (!fechaPedido) { alert('La fecha del pedido es obligatoria'); return; }
+      if (productosPedido.length === 0) { alert('Debe agregar al menos un producto'); return; }
+      if (!metodoPago) { alert('Debe seleccionar un método de pago'); return; }
+
+      // Validar cliente existe
+      try {
+        const resCliente = await fetch(`http://localhost:5000/existe_id/${clienteId}`);
+        if(!resCliente.ok) {
+          alert('Error validando cliente');
+          return;
+        }
+        const dataCliente = await resCliente.json();
+        if(!dataCliente.existe) {
+          alert('El ID del cliente no existe');
+          return;
+        }
+      } catch(e) {
+        alert('Error validando cliente: ' + e.message);
+        return;
+      }
+
+      // Crear objeto pedido con productos y cantidades
+      const pedidoData = {
+        _id: pedidoId,
+        cliente_id: clienteId,
+        fecha_pedido: fechaPedido,
+        productos: productosPedido.map(p => ({
+          id: p._id,
+          nombre: p.nombre,
+          precio: p.precio,
+          cantidad: p.cantidad
+        })),
+        metodo_pago: metodoPago
+      };
+
+      try {
+        const res = await fetch('http://localhost:5000/crear_pedido', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(pedidoData)
+        });
+        if(!res.ok) {
+          const text = await res.text();
+          alert('Error creando pedido: ' + text);
+          return;
+        }
+        const texto = await res.text();
+        alert(texto);
+
+        resetPedido();
+      } catch(e) {
+        alert('Error creando pedido: ' + e.message);
+      }
+    }
+
+    // Eliminar pedido
+    async function eliminarPedido() {
+      const pedidoIdEliminar = document.getElementById('pedido_id_eliminar').value.trim();
+      if(!pedidoIdEliminar) {
+        alert('Ingrese el ID del pedido a eliminar');
+        return;
+      }
+      try {
+        const res = await fetch(`http://localhost:5000/eliminar_pedido/${pedidoIdEliminar}`, { method: 'DELETE' });
+        if(!res.ok) {
+          const text = await res.text();
+          alert('Error al eliminar pedido: ' + text);
+          return;
+        }
+        const texto = await res.text();
+        alert(texto);
+        document.getElementById('pedido_id_eliminar').value = '';
+      } catch(e) {
+        alert('Error al eliminar pedido: ' + e.message);
+      }
+    }
+
+    // Leer clientes
+    async function leerClientes() {
+      try {
+        const res = await fetch('http://localhost:5000/leer');
+        if(!res.ok) throw new Error('Error al leer clientes');
+        const data = await res.json();
+        document.getElementById('salida_clientes').textContent = JSON.stringify(data, null, 2);
+      } catch(e) {
+        alert(e.message);
+      }
+    }
+
+    // Leer productos
+    async function leerProductos() {
+      try {
+        const res = await fetch('http://localhost:5000/leer_productos');
+        if(!res.ok) throw new Error('Error al leer productos');
+        const data = await res.json();
+        document.getElementById('salida_productos').textContent = JSON.stringify(data, null, 2);
+      } catch(e) {
+        alert(e.message);
+      }
+    }
+
+    // Leer pedidos
+    async function leerPedidos() {
+      try {
+        const res = await fetch('http://localhost:5000/leer_pedidos');
+        if(!res.ok) throw new Error('Error al leer pedidos');
+        const data = await res.json();
+        document.getElementById('salida_pedidos').textContent = JSON.stringify(data, null, 2);
+      } catch(e) {
+        alert(e.message);
+      }
+    }
+
+    // Funciones para crear/eliminar clientes y productos (ya las tienes, puedes añadirlas aquí si quieres)
+
+    // Inicialización: setear fecha máxima a hoy para inputs date
+    document.addEventListener('DOMContentLoaded', () => {
+      mostrarSeccion('clientes');
+      document.getElementById('cliente_fechaRegistro').max = new Date().toISOString().split('T')[0];
+      document.getElementById('cliente_fechaRegistro').value = document.getElementById('cliente_fechaRegistro').max;
+      document.getElementById('pedido_fecha').max = new Date().toISOString().split('T')[0];
+      document.getElementById('pedido_fecha').value = document.getElementById('pedido_fecha').max;
+    });
   </script>
 </body>
 </html>
