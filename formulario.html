@@ -4,90 +4,181 @@
   <meta charset="UTF-8" />
   <title>Formulario ComercioTech</title>
   <style>
+    /* RESET y fuentes */
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f4f4f4;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #d1e8ff, #f0f7ff);
       color: #333;
+      margin: 0;
+      padding: 0 20px 40px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h2, h3 {
+      color: #004e89;
+      margin-bottom: 10px;
     }
     nav {
-      background-color: #333;
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 5px;
+      background-color: #007a99;
+      padding: 12px 25px;
+      margin: 30px 0 30px 0;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 122, 153, 0.3);
       display: flex;
-      gap: 15px;
+      gap: 25px;
+      width: 100%;
+      max-width: 900px;
+      justify-content: center;
     }
     nav a {
+      color: #d9f0ff;
+      font-weight: 600;
+      font-size: 1.1rem;
       text-decoration: none;
-      font-weight: bold;
-      color: #fff;
-      padding: 8px 15px;
-      border-radius: 4px;
-      transition: background-color 0.3s;
+      padding: 10px 20px;
+      border-radius: 30px;
+      transition: background-color 0.3s, color 0.3s;
       cursor: pointer;
       user-select: none;
+      box-shadow: 0 2px 6px rgba(0, 122, 153, 0.2);
     }
-    nav a:hover,
-    nav a.active {
-      background-color: teal;
-      color: white;
+    nav a.active,
+    nav a:hover {
+      background-color: #004e89;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 78, 137, 0.7);
     }
+
+    .seccion {
+      background-color: #ffffffcc;
+      padding: 25px 30px;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 900px;
+      display: none;
+      flex-direction: column;
+    }
+    .visible {
+      display: flex !important;
+    }
+
     .form-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 15px;
+      gap: 15px;
+      margin-bottom: 20px;
+      justify-content: flex-start;
     }
-    input,
-    button,
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
     select {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 14px;
-      background-color: white;
+      flex: 1 1 180px;
+      min-width: 150px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 2px solid #007a99;
+      border-radius: 8px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      background-color: #f9fcff;
+      color: #004e89;
+      box-shadow: inset 1px 1px 3px #b3d1e8;
     }
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #004e89;
+      box-shadow: 0 0 8px #007a99aa;
+      background-color: #e1f0ff;
+    }
+
     button {
-      background-color: teal;
-      color: white;
+      padding: 12px 30px;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(90deg, #00b4db, #0083b0);
+      color: #fff;
       cursor: pointer;
-      transition: background-color 0.3s;
+      box-shadow: 0 6px 12px #0083b0aa;
+      transition: background 0.4s, box-shadow 0.3s;
+      user-select: none;
+      min-width: 160px;
     }
     button:hover {
-      background-color: #007a7a;
+      background: linear-gradient(90deg, #0083b0, #005f7a);
+      box-shadow: 0 8px 18px #005f7aaa;
     }
-    h2 {
-      margin-top: 0;
-      color: #222;
+    button:disabled {
+      background: #a6cde3;
+      cursor: not-allowed;
+      box-shadow: none;
     }
-    .seccion {
-      display: none;
-    }
-    .visible {
-      display: block !important;
-    }
+
     pre {
-      background: #eaeaea;
-      padding: 15px;
-      border-radius: 5px;
-      max-height: 300px;
-      overflow: auto;
+      background: #e3f1ff;
+      padding: 15px 20px;
+      border-radius: 10px;
+      color: #004e89;
+      font-size: 0.9rem;
+      max-height: 280px;
+      overflow-y: auto;
+      box-shadow: inset 0 0 10px #c1d6eb;
       white-space: pre-wrap;
+      margin-top: 10px;
     }
+
     table {
       border-collapse: collapse;
       width: 100%;
-      margin-top: 10px;
+      margin-top: 15px;
+      font-size: 0.95rem;
+      box-shadow: 0 2px 12px #b3d1e8cc;
+      border-radius: 12px;
+      overflow: hidden;
     }
     th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
+      border-bottom: 1px solid #d1e8ff;
+      padding: 12px 16px;
       text-align: left;
+      color: #004e89;
     }
+    th {
+      background-color: #007a99;
+      color: #f0f8ff;
+      font-weight: 600;
+    }
+    tr:hover {
+      background-color: #d9f0ff;
+    }
+
     .error {
-      color: red;
-      font-weight: bold;
+      color: #cc3300;
+      font-weight: 700;
+      margin-top: 5px;
+      flex-basis: 100%;
+    }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+      .form-group {
+        flex-direction: column;
+      }
+      input, select, button {
+        min-width: 100%;
+      }
+      nav {
+        flex-wrap: wrap;
+      }
     }
   </style>
 </head>
@@ -152,7 +243,10 @@
     <h2>Formulario de Pedidos</h2>
     <div class="form-group">
       <input type="text" id="pedido_id" placeholder="ID único del pedido" />
-      <input type="text" id="pedido_cliente_id" placeholder="ID Cliente" />
+      <select id="pedido_cliente_id">
+  <option value="">Seleccione un cliente</option>
+</select>
+
       <input type="date" id="pedido_fecha" min="2000-01-01" max="" />
     </div>
 
@@ -209,11 +303,13 @@
         document.getElementById('cliente_fechaRegistro').value = document.getElementById('cliente_fechaRegistro').max;
       }
       if(id === 'pedidos') {
-        document.getElementById('pedido_fecha').max = new Date().toISOString().split('T')[0];
-        document.getElementById('pedido_fecha').value = document.getElementById('pedido_fecha').max;
-        cargarProductos();
-        resetPedido();
-      }
+  document.getElementById('pedido_fecha').max = new Date().toISOString().split('T')[0];
+  document.getElementById('pedido_fecha').value = document.getElementById('pedido_fecha').max;
+  cargarProductos();
+  cargarClientes();  // <-- Agregado aquí
+  resetPedido();
+}
+
     }
 
     // Solo letras (sin números ni caracteres especiales)
@@ -296,7 +392,7 @@
           <td>${p.cantidad}</td>
           <td>$${p.precio.toFixed(2)}</td>
           <td>$${(p.precio * p.cantidad).toFixed(2)}</td>
-          <td><button onclick="quitarProducto(${i})">Quitar</button></td>
+          <td><button onclick="quitarProducto(${i})" style="background:#cc3300; padding:4px 10px; border-radius:5px; font-size:0.9rem;">Quitar</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -314,6 +410,26 @@
       const total = productosPedido.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
       document.getElementById('total_pedido').textContent = total.toFixed(2);
     }
+
+    // Cargar lista de IDs de clientes en el select
+async function cargarClientes() {
+  try {
+    const res = await fetch('http://localhost:5000/leer');
+    if (!res.ok) throw new Error('Error al obtener clientes');
+    const clientes = await res.json();
+    const select = document.getElementById('pedido_cliente_id');
+    select.innerHTML = '<option value="">Seleccione un cliente</option>';
+    clientes.forEach(c => {
+      const option = document.createElement('option');
+      option.value = c._id;
+      option.textContent = `${c._id} - ${c.nombre} ${c.apellidos}`;
+      select.appendChild(option);
+    });
+  } catch (e) {
+    alert('Error al cargar clientes: ' + e.message);
+  }
+}
+
 
     // Resetear pedido (limpiar lista productos y tabla)
     function resetPedido() {
@@ -356,17 +472,19 @@
         return;
       }
 
-      // Crear objeto pedido con productos y cantidades
+      // Construir objeto pedido con productos y cantidades
       const pedidoData = {
         _id: pedidoId,
         cliente_id: clienteId,
         fecha_pedido: fechaPedido,
         productos: productosPedido.map(p => ({
-          id: p._id,
+          producto_id: p._id,
           nombre: p.nombre,
-          precio: p.precio,
-          cantidad: p.cantidad
+          cantidad: p.cantidad,
+          precio_unitario: p.precio,
+          subtotal: p.precio * p.cantidad
         })),
+        total_compra: productosPedido.reduce((acc, p) => acc + p.precio * p.cantidad, 0),
         metodo_pago: metodoPago
       };
 
@@ -381,34 +499,79 @@
           alert('Error creando pedido: ' + text);
           return;
         }
-        const texto = await res.text();
-        alert(texto);
-
+        alert('Pedido creado con éxito');
         resetPedido();
       } catch(e) {
         alert('Error creando pedido: ' + e.message);
       }
     }
 
-    // Eliminar pedido
-    async function eliminarPedido() {
-      const pedidoIdEliminar = document.getElementById('pedido_id_eliminar').value.trim();
-      if(!pedidoIdEliminar) {
-        alert('Ingrese el ID del pedido a eliminar');
-        return;
-      }
+    // Crear cliente
+    async function crearCliente() {
+      const cliente = {
+        _id: document.getElementById('cliente_id').value.trim(),
+        nombre: document.getElementById('cliente_nombre').value.trim(),
+        apellidos: document.getElementById('cliente_apellidos').value.trim(),
+        direccion: {
+          calle: document.getElementById('cliente_calle').value.trim(),
+          numero: document.getElementById('cliente_numero').value.trim(),
+          ciudad: document.getElementById('cliente_ciudad').value.trim()
+        },
+        fechaRegistro: document.getElementById('cliente_fechaRegistro').value
+      };
+
+      // Validaciones simples
+      if(!cliente._id) { alert('El ID del cliente es obligatorio'); return; }
+      if(!cliente.nombre) { alert('El nombre es obligatorio'); return; }
+      if(!cliente.apellidos) { alert('Los apellidos son obligatorios'); return; }
+      if(!cliente.direccion.calle) { alert('La calle es obligatoria'); return; }
+      if(!cliente.direccion.numero || isNaN(cliente.direccion.numero)) { alert('Número válido es obligatorio'); return; }
+      if(!cliente.direccion.ciudad) { alert('La ciudad es obligatoria'); return; }
+      if(!cliente.fechaRegistro) { alert('Fecha de registro es obligatoria'); return; }
+
       try {
-        const res = await fetch(`http://localhost:5000/eliminar_pedido/${pedidoIdEliminar}`, { method: 'DELETE' });
+        const res = await fetch('http://localhost:5000/crear', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(cliente)
+        });
         if(!res.ok) {
           const text = await res.text();
-          alert('Error al eliminar pedido: ' + text);
+          alert('Error creando cliente: ' + text);
           return;
         }
-        const texto = await res.text();
-        alert(texto);
-        document.getElementById('pedido_id_eliminar').value = '';
+        alert('Cliente creado con éxito');
+        limpiarCamposCliente();
       } catch(e) {
-        alert('Error al eliminar pedido: ' + e.message);
+        alert('Error creando cliente: ' + e.message);
+      }
+    }
+
+    function limpiarCamposCliente() {
+      document.getElementById('cliente_id').value = '';
+      document.getElementById('cliente_nombre').value = '';
+      document.getElementById('cliente_apellidos').value = '';
+      document.getElementById('cliente_calle').value = '';
+      document.getElementById('cliente_numero').value = '';
+      document.getElementById('cliente_ciudad').value = '';
+      document.getElementById('cliente_fechaRegistro').value = new Date().toISOString().split('T')[0];
+    }
+
+    // Eliminar cliente
+    async function eliminarCliente() {
+      const id = document.getElementById('cliente_id_eliminar').value.trim();
+      if(!id) { alert('Ingrese el ID del cliente a eliminar'); return; }
+      try {
+        const res = await fetch(`http://localhost:5000/eliminar/${id}`, {method: 'DELETE'});
+        if(!res.ok) {
+          const text = await res.text();
+          alert('Error eliminando cliente: ' + text);
+          return;
+        }
+        alert('Cliente eliminado');
+        document.getElementById('cliente_id_eliminar').value = '';
+      } catch(e) {
+        alert('Error eliminando cliente: ' + e.message);
       }
     }
 
@@ -416,7 +579,7 @@
     async function leerClientes() {
       try {
         const res = await fetch('http://localhost:5000/leer');
-        if(!res.ok) throw new Error('Error al leer clientes');
+        if(!res.ok) throw new Error('Error leyendo clientes');
         const data = await res.json();
         document.getElementById('salida_clientes').textContent = JSON.stringify(data, null, 2);
       } catch(e) {
@@ -424,11 +587,74 @@
       }
     }
 
+    // Crear producto
+    async function crearProducto() {
+      const producto = {
+        _id: document.getElementById('producto_id').value.trim(),
+        codigo: document.getElementById('producto_codigo').value.trim(),
+        nombre: document.getElementById('producto_nombre').value.trim(),
+        precio: parseFloat(document.getElementById('producto_precio').value),
+        stock: parseInt(document.getElementById('producto_stock').value),
+        estado: document.getElementById('producto_estado').value
+      };
+      // Validaciones básicas
+      if(!producto._id) { alert('ID del producto es obligatorio'); return; }
+      if(!producto.codigo) { alert('Código del producto es obligatorio'); return; }
+      if(!producto.nombre) { alert('Nombre del producto es obligatorio'); return; }
+      if(isNaN(producto.precio) || producto.precio < 0) { alert('Precio válido es obligatorio'); return; }
+      if(isNaN(producto.stock) || producto.stock < 0) { alert('Stock válido es obligatorio'); return; }
+      if(!producto.estado) { alert('Seleccione un estado'); return; }
+
+      try {
+        const res = await fetch('http://localhost:5000/crear_producto', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(producto)
+        });
+        if(!res.ok) {
+          const text = await res.text();
+          alert('Error creando producto: ' + text);
+          return;
+        }
+        alert('Producto creado con éxito');
+        limpiarCamposProducto();
+      } catch(e) {
+        alert('Error creando producto: ' + e.message);
+      }
+    }
+
+    function limpiarCamposProducto() {
+      document.getElementById('producto_id').value = '';
+      document.getElementById('producto_codigo').value = '';
+      document.getElementById('producto_nombre').value = '';
+      document.getElementById('producto_precio').value = '';
+      document.getElementById('producto_stock').value = '';
+      document.getElementById('producto_estado').value = '';
+    }
+
+    // Eliminar producto
+    async function eliminarProducto() {
+      const id = document.getElementById('producto_id_eliminar').value.trim();
+      if(!id) { alert('Ingrese el ID del producto a eliminar'); return; }
+      try {
+        const res = await fetch(`http://localhost:5000/eliminar_producto/${id}`, {method: 'DELETE'});
+        if(!res.ok) {
+          const text = await res.text();
+          alert('Error eliminando producto: ' + text);
+          return;
+        }
+        alert('Producto eliminado');
+        document.getElementById('producto_id_eliminar').value = '';
+      } catch(e) {
+        alert('Error eliminando producto: ' + e.message);
+      }
+    }
+
     // Leer productos
     async function leerProductos() {
       try {
         const res = await fetch('http://localhost:5000/leer_productos');
-        if(!res.ok) throw new Error('Error al leer productos');
+        if(!res.ok) throw new Error('Error leyendo productos');
         const data = await res.json();
         document.getElementById('salida_productos').textContent = JSON.stringify(data, null, 2);
       } catch(e) {
@@ -436,11 +662,29 @@
       }
     }
 
+    // Eliminar pedido
+    async function eliminarPedido() {
+      const id = document.getElementById('pedido_id_eliminar').value.trim();
+      if(!id) { alert('Ingrese el ID del pedido a eliminar'); return; }
+      try {
+        const res = await fetch(`http://localhost:5000/eliminar_pedido/${id}`, {method: 'DELETE'});
+        if(!res.ok) {
+          const text = await res.text();
+          alert('Error eliminando pedido: ' + text);
+          return;
+        }
+        alert('Pedido eliminado');
+        document.getElementById('pedido_id_eliminar').value = '';
+      } catch(e) {
+        alert('Error eliminando pedido: ' + e.message);
+      }
+    }
+
     // Leer pedidos
     async function leerPedidos() {
       try {
         const res = await fetch('http://localhost:5000/leer_pedidos');
-        if(!res.ok) throw new Error('Error al leer pedidos');
+        if(!res.ok) throw new Error('Error leyendo pedidos');
         const data = await res.json();
         document.getElementById('salida_pedidos').textContent = JSON.stringify(data, null, 2);
       } catch(e) {
@@ -448,16 +692,17 @@
       }
     }
 
-    // Funciones para crear/eliminar clientes y productos (ya las tienes, puedes añadirlas aquí si quieres)
+    // Inicializar fechas max al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+      const hoy = new Date().toISOString().split('T')[0];
+      document.getElementById('cliente_fechaRegistro').max = hoy;
+      document.getElementById('cliente_fechaRegistro').value = hoy;
+      document.getElementById('pedido_fecha').max = hoy;
+      document.getElementById('pedido_fecha').value = hoy;
 
-    // Inicialización: setear fecha máxima a hoy para inputs date
-    document.addEventListener('DOMContentLoaded', () => {
-      mostrarSeccion('clientes');
-      document.getElementById('cliente_fechaRegistro').max = new Date().toISOString().split('T')[0];
-      document.getElementById('cliente_fechaRegistro').value = document.getElementById('cliente_fechaRegistro').max;
-      document.getElementById('pedido_fecha').max = new Date().toISOString().split('T')[0];
-      document.getElementById('pedido_fecha').value = document.getElementById('pedido_fecha').max;
+      cargarProductos();
     });
+
   </script>
 </body>
 </html>
